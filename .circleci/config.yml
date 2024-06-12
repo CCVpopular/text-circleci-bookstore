@@ -20,6 +20,9 @@ jobs:
               sleep 1
             done
       - run:
+          name: Create test database
+          command: echo 'CREATE DATABASE IF NOT EXISTS testdb;' | mysql -h 127.0.0.1 -u root --protocol=tcp
+      - run:
           name: Install Dependencies
           command: mvn dependency:resolve
       - run:
