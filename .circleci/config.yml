@@ -1,0 +1,38 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: cimg/openjdk:21.0
+        environment:
+          - DATABASE_HOST: 127.0.0.1
+          - DATABASE_PORT: 3306
+          - DATABASE_USER: root
+          - DATABASE_PASSWORD: root
+          - image: circleci/mysql:5.7
+        environment:
+          MYSQL_ROOT_PASSWORD: root
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Wait for MySQL to be ready
+          command: |
+            for i in `seq 1 30`; do
+              nc -z 127.0.0.1 3306 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for MySQL && exit 1
+      - run:
+          name: Install Dependencies
+          command: mvn dependency:resolve
+      - run:
+          name: Run Tests
+          command: mvn test
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
