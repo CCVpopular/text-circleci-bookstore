@@ -4,14 +4,7 @@ jobs:
   build:
     docker:
       - image: cimg/openjdk:21.0
-        environment:
-          - DATABASE_HOST: 127.0.0.1
-          - DATABASE_PORT: 3306
-          - DATABASE_USER: root
-          - DATABASE_PASSWORD: root
-          - image: circleci/mysql:5.7
-        environment:
-          MYSQL_ROOT_PASSWORD: root
+      - image: circleci/mysql:5.7
     working_directory: ~/repo
     steps:
       - checkout
@@ -30,6 +23,11 @@ jobs:
       - run:
           name: Run Tests
           command: mvn test
+    environment:
+      DATABASE_HOST: 127.0.0.1
+      DATABASE_PORT: 3306
+      DATABASE_USER: root
+      DATABASE_PASSWORD: ""
 
 workflows:
   version: 2
