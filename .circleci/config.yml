@@ -26,10 +26,6 @@ jobs:
               sleep 1
             done
       - run:
-          name: Create Database
-          command: |
-            mysql -h 127.0.0.1 -u root -proot -e 'CREATE DATABASE IF NOT EXISTS bookstore;'
-      - run:
           name: Install Dependencies
           command: mvn dependency:resolve
       - run:
