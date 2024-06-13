@@ -6,7 +6,7 @@ jobs:
       - image: cimg/openjdk:21.0
       - image: cimg/mysql:5.7
         environment:
-          MYSQL_ROOT_PASSWORD:""
+          MYSQL_ROOT_PASSWORD: ""
           MYSQL_DATABASE: bookstore
     working_directory: ~/repo
     steps:
