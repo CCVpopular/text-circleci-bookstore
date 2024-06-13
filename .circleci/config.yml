@@ -1,39 +1,40 @@
 version: 2.1
 
-executors:
-  maven-executor:
-    docker:
-      - image: cimg/openjdk:21-jdk
-      - image: cimg/mysql:5.7
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: bookstore
-
 jobs:
   build:
-    executor: maven-executor
+    docker:
+      - image: cimg/openjdk:21.0
+      - image: cimg/mysql:5.7
+    working_directory: ~/repo
     steps:
       - checkout
       - run:
           name: Wait for MySQL to be ready
           command: |
             for i in `seq 1 30`; do
-              nc -z localhost 3306 && echo "MySQL is up" && break
+              if echo 'SELECT 1' | mysql -h 127.0.0.1 -u root --protocol=tcp; then
+                echo "MySQL is ready"
+                break
+              fi
               echo "Waiting for MySQL..."
               sleep 1
             done
       - run:
           name: Install Dependencies
-          command: mvn dependency:go-offline
-      - run:
-          name: Build with Maven
-          command: mvn clean install
+          command: mvn dependency:resolve
       - run:
           name: Run Tests
           command: mvn test
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/bookstore
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQLDialect
 
 workflows:
   version: 2
-  build-and-test:
+  build_and_test:
     jobs:
       - build
