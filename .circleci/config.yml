@@ -3,8 +3,8 @@ version: 2.1
 executors:
   maven-executor:
     docker:
-      - image: circleci/openjdk:21-jdk
-      - image: circleci/mysql:5.7
+      - image: cimg/openjdk:21-jdk
+      - image: cimg/mysql:5.7
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: bookstore
