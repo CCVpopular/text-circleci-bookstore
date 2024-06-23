@@ -1,9 +1,13 @@
 package com.bookstore.entity;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.bookstore.repository.IUserRepository;
@@ -20,7 +24,7 @@ public class CustomUserDetail implements UserDetails {
     
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities(){
-        return List.of();
+        return Arrays.stream(userRepository.getRoleOfUser(user.getId())).map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
     }
 
     @Override

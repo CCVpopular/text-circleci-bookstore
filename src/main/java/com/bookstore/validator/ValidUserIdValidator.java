@@ -1,21 +1,18 @@
 package com.bookstore.validator;
 
-import org.springframework.beans.factory.annotation.Autowired;
 
-import com.bookstore.repository.IUserRepository;
+import com.bookstore.entity.User;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class ValidUserIdValidator implements ConstraintValidator<ValidUserId,Long> {
-    @Autowired
-    private IUserRepository userRepository;
+public class ValidUserIdValidator implements ConstraintValidator<ValidUserId,User> {
 
     @Override
-    public boolean isValid(Long userId, ConstraintValidatorContext constraintValidatorContext){
-        if(userRepository == null)
+    public boolean isValid(User user, ConstraintValidatorContext constraintValidatorContext){
+        if(user == null)
             return true;
-        return userRepository.findById(userId) == null;
+        return user.getId() != null;
     }
     
 }

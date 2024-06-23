@@ -4,6 +4,7 @@ import com.bookstore.entity.Category;
 import com.bookstore.services.CategoryServices;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,12 +26,14 @@ public class CategoryController {
     }
 
     @GetMapping("/add")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public String showAddForm(Model model) {
         model.addAttribute("category", new Category());
         return "category/add";
     }
 
     @PostMapping("/add")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public String addCategory(@Valid @ModelAttribute("category") Category category, BindingResult result) {
         if (result.hasErrors()) {
             return "category/add";
@@ -40,6 +43,7 @@ public class CategoryController {
     }
 
     @GetMapping("/edit/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public String showEditForm(@PathVariable("id") Long id, Model model) {
         Category category = categoryServices.getCategoryById(id);
         if (category != null) {
@@ -50,6 +54,7 @@ public class CategoryController {
     }
 
     @PostMapping("/edit/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public String updateCategory(@PathVariable("id") Long id, @Valid @ModelAttribute("category") Category category, BindingResult result) {
         if (result.hasErrors()) {
             return "category/edit";
@@ -59,6 +64,7 @@ public class CategoryController {
     }
 
     @GetMapping("/delete/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public String deleteCategory(@PathVariable("id") Long id) {
         categoryServices.deleteCategory(id);
         return "redirect:/categories";

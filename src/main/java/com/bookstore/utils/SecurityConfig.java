@@ -1,6 +1,8 @@
 package com.bookstore.utils;
 
 import com.bookstore.services.CustomUserDetailServices;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -11,11 +13,16 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+
+        @Autowired
+        private OAuthSuccessHandler handler;
+
     @Bean
     public UserDetailsService userDetailsService(){
         return new CustomUserDetailServices();
@@ -35,17 +42,24 @@ public class SecurityConfig {
     }
 
     @Bean
+    public AccessDeniedHandler accessDeniedHandler( ){
+        return (request, response, accessDeniedException) -> {
+            response.sendRedirect(request.getContextPath() + "/error/403");
+        };
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws
             Exception {
         return http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers( "/css/**", "/js/**", "/", "/register",
-                                "/error")
+                        .requestMatchers( "/css/**", "/js/**", "/", "/register", "/forgotpassword/**",
+                                "/error", "..**")
                         .permitAll()
                         .requestMatchers( "/books/edit", "/books/delete")
-                        .authenticated()
+                        .hasAnyAuthority("ADMIN")
                         .requestMatchers("/books", "/books/add")
-                        .authenticated()
+                        .hasAnyAuthority("ADMIN", "USER")
                         .anyRequest().authenticated()
                 )
                 .logout(logout -> logout.logoutUrl("/logout")
@@ -60,12 +74,16 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/")
                         .permitAll()
                 )
+                .oauth2Login(formLogin -> formLogin.loginPage("/login")
+                        .successHandler(handler)
+                        .permitAll()
+                )
                 .rememberMe(rememberMe -> rememberMe.key("uniqueAndSecret")
                         .tokenValiditySeconds(86400)
                         .userDetailsService(userDetailsService())
                 )
                 .exceptionHandling(exceptionHandling ->
-                        exceptionHandling.accessDeniedPage("/403"))
+                        exceptionHandling.accessDeniedHandler(accessDeniedHandler()))
                 .build();
     }
 }
