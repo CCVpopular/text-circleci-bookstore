@@ -28,4 +28,10 @@ public interface IUserRepository extends JpaRepository<User,Integer> {
 
     @Query(value = "SELECT r.name FROM role r INNER JOIN user_role u_r ON r.id = u_r.role_id WHERE u_r.user_id = ?1", nativeQuery = true)
     String[] getRoleOfUser(Long userId);
+
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE user_role SET role_id = ?2 WHERE user_id = ?1", nativeQuery = true)
+    void updateRoleToUser(Long userId, long roleId);
 }   

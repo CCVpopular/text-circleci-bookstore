@@ -16,8 +16,10 @@ import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @Controller
@@ -49,4 +51,17 @@ public class UserController {
         userServices.save(user);
         return "redirect:/login";
     }
+
+    @GetMapping("/listuser")
+    public String listAllUser(Model model) {
+        model.addAttribute("users", userServices.findAllUser());
+        return "user/list";
+    }
+
+    @PostMapping("/useruptoadmin/{id}")
+    public String changeroleuser(@PathVariable("id") Long id) {
+        userServices.updaterole(id, userServices.getRoleIdByUserName("ADMIN"));
+        return "redirect:/listuser";
+    }
+    
 }

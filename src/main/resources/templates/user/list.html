@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách user</title>
+    <th:block th:replace="layout::link-css"></th:block>
+</head>
+<body>
+<th:block th:replace="layout::header"></th:block>
+<div class="container mt-4">
+    <h1>Danh sách người dùng</h1>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>email</th>
+            <th>Tên </th>
+            <th>Chức năng</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.email}"></td>
+            <td th:text="${user.name}"></td>
+            <td>
+                <form th:action="@{/useruptoadmin/{id}(id=${user.id})}" method="post">
+                    <input type="submit" class="btn btn-primary" value="Nâng lên thành Admin">
+                <a th:action="@{/useruptoadmin/{id}(id=${user.id})}" method="post">Nâng lên thành Admin</a> 
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<th:block th:replace="layout :: footer"></th:block>
+</body>
+</html>

@@ -1,5 +1,7 @@
 package com.bookstore.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,5 +27,16 @@ public class UserServices {
     }
     public User findByEmail (String user){
         return userRepository.findByEmail(user);
+    }
+    public List<User> findAllUser(){
+        return userRepository.findAll();
+    }
+
+    public void updaterole(Long userId, Long roleId){
+        userRepository.updateRoleToUser(userId, roleId);
+    }
+
+    public Long getRoleIdByUserName(String name){
+        return roleRepository.getRoleIdByName(name);
     }
 }
